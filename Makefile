@@ -13,3 +13,6 @@ prio_queue.o: prio_queue.c
 
 utils.o: utils.c
 	$(CC) $(CFLAGS) -c -o utils.o utils.c
+
+clean:
+	rm -f *.0 main

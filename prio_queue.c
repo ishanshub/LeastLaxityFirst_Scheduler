@@ -60,12 +60,17 @@ PriorityQueue* init_priority_queue(int capacity) {
 // enqueue
 void enqueue(PriorityQueue *pq, Task task) {
     if (pq->size == pq->capacity) {
-        pq->capacity *= 2;
-        pq->data = (Task *)realloc(pq->data, pq->capacity * sizeof(Task));
-        if (!pq->data) {
+
+        int new_capacity = pq->capacity*2;
+        Task *new_data = (Task *)realloc(pq->data, pq->capacity * sizeof(Task));
+        
+        if (!new_data) {
             printf("Memory reallocation failed for PriorityQueue.\n");
             exit(1);
         }
+
+        pq->data = new_data;
+        pq->capacity = new_capacity;
     }
 
     pq->data[pq->size] = task;

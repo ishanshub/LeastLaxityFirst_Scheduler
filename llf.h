@@ -21,9 +21,10 @@ typedef struct {
 
 // Function Declaration
 void addReadyTasksToQueue(const char *filename, PriorityQueue **pq, int currentTime);
+int checkDeadlineMiss(PriorityQueue *pq, double currentTime);
 void printTasks(PriorityQueue **pq, double *currentTime);
+void printSingleTask(Task task);
 double generateExeTime(double lower, double upper);
-
 double get_laxity(Task *task, double curr_time);
 double generateExeTime(double lower, double upper);
 

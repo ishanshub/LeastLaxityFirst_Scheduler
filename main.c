@@ -13,14 +13,22 @@ void run_scheduler(const char *filename, PriorityQueue **pq, double *currentTime
         return;
     }
 
-    while (*pq == NULL || (*pq)->size == 0) {
-
+    while (*pq != NULL && (*pq)->size > 0) {
         Task currTask = dequeue(*pq);
+
+        printf("Executing Task ID: %d\tTime: %.2f\n", currTask.id, *currentTime);
+        printf("Before Execution\n");
+        printSingleTask(currTask);
 
         double executedTime = fmin(currTask.execution_left, timeQuanta);
         currTask.execution_left -= executedTime;
         *currentTime += executedTime;
 
+        if (checkDeadlineMiss(*pq, *currentTime)) {
+            return;
+        }
+
+        printf("After Execution.\n");
         if (currTask.execution_left <= 0) {
             currTask.instance_cnt++;
 
@@ -31,6 +39,7 @@ void run_scheduler(const char *filename, PriorityQueue **pq, double *currentTime
                 currTask.execution_left = generateExeTime(currTask.WCET * 0.5, currTask.WCET);
                 currTask.laxity = get_laxity(&currTask, *currentTime);
 
+                printf("Task ID: %d completed. Remaining Time Before Deadline: %.2f\n", currTask.id, currTask.deadline - *currentTime);
                 enqueue(*pq, currTask);
             }
         }
@@ -40,9 +49,10 @@ void run_scheduler(const char *filename, PriorityQueue **pq, double *currentTime
         }
 
         printSingleTask(currTask);
+        printf("\n");
     }
 
-    printf("All Jobs completed.\n");
+    printf("\n---All Jobs Completed---\n");
         return;
 }
 
@@ -50,7 +60,7 @@ int main(int argc, char *argv[]) {
 
     double currentTime = 0.0;
 
-    PriorityQueue *pq;
+    PriorityQueue *pq = NULL;
 
     if (argc < 2) {
         printf("Enter file name in cmd.\n");
@@ -58,8 +68,8 @@ int main(int argc, char *argv[]) {
     }
 
     //run the scheduler
-    run_scheduler(argv[1], &pq, &currentTime, 3);
-    printTasks(&pq, &currentTime);
+    run_scheduler(argv[1], &pq, &currentTime, 1);
+    //printTasks(&pq, &currentTime);
 
     free_prioirty_queue(pq);
 
